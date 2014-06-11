@@ -21,26 +21,36 @@ $feed = json_decode($twitter->setGetfield($getfield)->buildOauth($url, $requestM
 //Grab the no spoilers keywords from the URL
 $noSpoilers = explode(',',$_GET['spoilMeNot']);
 
-//Create the array to hold all active hashtags
-$allActiveHashtags = array();
-
 //Echo out the terms that are being hidden (add checkbox functionality)
 foreach($noSpoilers as $hideMe){
     echo '<div>'.$hideMe.'</div>';
 }
 
-//Push ALL hashtags to the active hashtags array for later checking
-foreach($feed as $tags){
-    foreach($tags->entities->hashtags as $hashtags){
-        array_push($allActiveHashtags, $hashtags->text);
-    }
-};
-
 
 //Grab the latest tweets and also parse out their hashtags (if they have any)
 foreach($feed as $tweets){
+
+    //Clear out the hashtag array each run (maybe put at bottom)
+    $allActiveHashtags = array();
+
+    $showThisTweet = false;
+
+    //Push each hashtag from each tweet in to the allActiveHashtags array
+    foreach($tweets->entities->hashtags as $hashtags){
+        array_push($allActiveHashtags, $hashtags->text);
+    }
+
+    //Check each item in allactivehashtags array against noSpoilers and do not render tweet if there is a match
+    $spoiler = array_intersect($allActiveHashtags, $noSpoilers);
+
+    if(empty($spoiler)){
+        $showThisTweet = true;
+    }
+
+    if($showThisTweet){
     echo '<div style="margin:2em 0">';
     echo $tweets->text;
     echo '</div>';
+    };
 }
 
