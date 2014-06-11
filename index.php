@@ -30,9 +30,10 @@ foreach($noSpoilers as $hideMe){
 //Grab the latest tweets and also parse out their hashtags (if they have any)
 foreach($feed as $tweets){
 
-    //Clear out the hashtag array each run (maybe put at bottom)
+    //Clear out the hashtag array each run
     $allActiveHashtags = array();
 
+    //Flag reset to false
     $showThisTweet = false;
 
     //Push each hashtag from each tweet in to the allActiveHashtags array
@@ -43,14 +44,16 @@ foreach($feed as $tweets){
     //Check each item in allactivehashtags array against noSpoilers and do not render tweet if there is a match
     $spoiler = array_intersect($allActiveHashtags, $noSpoilers);
 
+    //If the array created above, spoiler, is empty -- meaning there are no hashtags that are intersecting -- set the flag to show
     if(empty($spoiler)){
         $showThisTweet = true;
     }
 
+    //Show the tweet if the flag is true
     if($showThisTweet){
-    echo '<div style="margin:2em 0">';
-    echo $tweets->text;
-    echo '</div>';
+        echo '<div style="margin:2em 0">';
+        echo $tweets->text;
+        echo '</div>';
     };
 }
 
